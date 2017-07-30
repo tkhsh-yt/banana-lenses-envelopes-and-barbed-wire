@@ -1,16 +1,5 @@
 package list
 
-object Lazy {
-
-  type Thunk[A] = () => A
-
-  def thunk[A](a: => A): () => A =
-    () => a
-
-  def eval[A](a: () => A): A =
-    a()
-}
-
 import Lazy._
 
 // A* ::= Nil | Cons (A||A*)
