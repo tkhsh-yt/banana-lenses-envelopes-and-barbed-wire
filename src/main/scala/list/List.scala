@@ -19,7 +19,7 @@ sealed trait List[A] { self =>
   // Start Catamorphism
   def cata[B](b: => B)(f: (A, B) => B): B = self match {
     case Nil()       => b
-    case Cons(a, as) => f(eval(a), eval(as).cata(b)(f))
+    case Cons(a, as) => f(a, eval(as).cata(b)(f))
   }
 
   def length: Int =
@@ -28,7 +28,7 @@ sealed trait List[A] { self =>
   def filter(p: A => Boolean): List[A] =
     self.cata(Nil[A](): List[A]) { (a, as) =>
       p(a) match {
-        case true  => Cons(thunk(a), thunk(as))
+        case true  => Cons(a, thunk(as))
         case false => as
       }
     }
@@ -38,7 +38,7 @@ sealed trait List[A] { self =>
   def zip[B](bs: List[B]): List[(A, B)] = {
     def g(seed: (List[A], List[B])): ((A, B), (List[A], List[B])) = {
       val (Cons(a, as), Cons(b, bs)) = seed
-      ((eval(a), eval(b)), (eval(as), eval(bs)))
+      ((a, b), (eval(as), eval(bs)))
     }
 
     def p(seed: (List[A], List[B])): Boolean = {
@@ -54,14 +54,14 @@ case class Nil[A]() extends List[A] {
 
   override def toString = "[]"
 }
-case class Cons[A](a: Thunk[A], as: Thunk[List[A]]) extends List[A] {
+case class Cons[A](a: A, as: Thunk[List[A]]) extends List[A] {
 
   private def toString(as: Thunk[List[A]], acc: String): String = as() match {
     case Nil()       => acc
-    case Cons(a, as) => toString(as, acc + ", " + eval(a))
+    case Cons(a, as) => toString(as, acc + ", " + a)
   }
 
-  override def toString = "[" + toString(as, eval(a).toString) + "]"
+  override def toString = "[" + toString(as, a.toString) + "]"
 }
 
 object List {
@@ -70,7 +70,7 @@ object List {
     lazy val head = hd
     lazy val tail = tl
 
-    Cons(thunk(head), thunk(tail))
+    Cons(head, thunk(tail))
   }
 
   def nil[A]: List[A] = Nil()
@@ -79,7 +79,7 @@ object List {
     case true  => Nil()
     case false =>
       val (a, bb) = g(b)
-      Cons(thunk(a), thunk(ana(bb)(g)(p)))
+      Cons(a, thunk(ana(bb)(g)(p)))
   }
 
   def iterate[A](f: A => A)(a :A): List[A] = {
