@@ -5,14 +5,15 @@ import Lazy._
 // A* ::= Nil | Cons (A||A*)
 sealed trait List[A] { self =>
 
+  import List.{cons, nil}
+
   def take(n: Int): List[A] =
     n > 0 match {
-      case false => Nil()
+      case false => nil
       case true  =>
         self match {
-          case Nil()       => Nil()
-          case Cons(a, as) =>
-            Cons(a, thunk(eval(as).take(n-1)))
+          case Nil()       => nil
+          case Cons(a, as) => cons(a, eval(as).take(n-1))
         }
     }
 
@@ -26,9 +27,9 @@ sealed trait List[A] { self =>
     self.cata(0) { (a, n) => 1 + n }
 
   def filter(p: A => Boolean): List[A] =
-    self.cata(Nil[A](): List[A]) { (a, as) =>
+    self.cata(nil[A]) { (a, as) =>
       p(a) match {
-        case true  => Cons(a, thunk(as))
+        case true  => cons(a, as)
         case false => as
       }
     }
