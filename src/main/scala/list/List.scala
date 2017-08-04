@@ -76,12 +76,13 @@ object List {
 
   def nil[A]: List[A] = Nil()
 
-  def ana[A, B](b: => B)(g: B => (A, B))(p: B => Boolean): List[A] = p(b) match {
-    case true  => Nil()
-    case false =>
-      val (a, bb) = g(b)
-      Cons(a, thunk(ana(bb)(g)(p)))
-  }
+  def ana[A, B](b: => B)(g: B => (A, B))(p: B => Boolean): List[A] =
+    p(b) match {
+      case true  => nil
+      case false =>
+        val (a, bb) = g(b)
+        cons(a, ana(bb)(g)(p))
+    }
 
   def iterate[A](f: A => A)(a :A): List[A] = {
     def g(seed: A): (A, A)  = (seed, f(seed))
