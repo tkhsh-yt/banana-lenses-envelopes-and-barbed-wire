@@ -26,4 +26,8 @@ object Main extends App {
   println(list_123.zip(list_12))
   println(List.iterate((_: Int) + 1)(0).take(10))
   // // End Anamorphism
+
+  // Start Hylomorphism
+  println(List.fac(5))
+  // End Hylomorphism
 }

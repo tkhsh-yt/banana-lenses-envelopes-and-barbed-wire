@@ -75,7 +75,8 @@ object List {
   }
 
   def nil[A]: List[A] = Nil()
-
+  
+  // Start Anamorphism
   def ana[A, B](b: => B)(g: B => (A, B))(p: B => Boolean): List[A] =
     p(b) match {
       case true  => nil
@@ -90,4 +91,23 @@ object List {
 
     List.ana(a)(g)(p)
   }
+  // End Anamorphism
+
+  // Start Hylomorphism
+  def hylo[A, B, C](c: => C, f: (B, C) => C)(a: => A, g: A => (B, A), p: A => Boolean): C =
+    p(a) match {
+      case true  => c
+      case false =>
+        val (b, aa) = g(a)
+        f(b, hylo(c, f)(aa, g, p))
+    }
+
+  def fac(n: Int): Int = {
+    def f(b: Int, c: Int): Int = b * c
+    def g(n: Int): (Int, Int) = (n, n - 1)
+    def p(n: Int): Boolean = n == 0
+
+    hylo(1, f)(n, g, p)
+  }
+  // End Hylomorphism
 }
