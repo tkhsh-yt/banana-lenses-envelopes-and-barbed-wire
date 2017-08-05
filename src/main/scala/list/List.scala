@@ -85,7 +85,7 @@ object List {
         cons(a, ana(bb)(g)(p))
     }
 
-  def iterate[A](f: A => A)(a :A): List[A] = {
+  def iterate[A](a :A)(f: A => A): List[A] = {
     def g(seed: A): (A, A)  = (seed, f(seed))
     def p(seed: A): Boolean = false
 
