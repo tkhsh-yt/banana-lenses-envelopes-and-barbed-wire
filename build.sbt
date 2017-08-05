@@ -1,4 +1,4 @@
-name := "othello"
+name := "bananas-lenses-envelopes-and-barbed-wire"
 
 version := "1.0"
 
