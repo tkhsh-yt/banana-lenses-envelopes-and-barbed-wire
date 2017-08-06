@@ -30,4 +30,9 @@ object Main extends App {
   // Start Hylomorphism
   println(List.fac(5))
   // End Hylomorphism
+
+  // Start Paramorphism
+  println(Paramophisms.fac(5))
+  println(Paramophisms.tails(list_123))
+  // End Hylomorphism
 }
